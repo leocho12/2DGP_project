@@ -1,5 +1,7 @@
 from pico2d import*
 from map import Map
+from duck import Duck
+
 
 def handle_events():
     pass
