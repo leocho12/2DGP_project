@@ -3,6 +3,7 @@ from pico2d import*
 
 from map import Map
 from duck import Duck
+import game_world
 
 
 def handle_events():
@@ -22,10 +23,12 @@ def reset_world():
     pass
 
 def update_world():
-    pass
+    game_world.update()
 
 def render_world():
-    pass
+    clear_canvas()
+    game_world.render()
+    update_canvas()
 
 running=True
 
