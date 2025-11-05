@@ -1,3 +1,5 @@
+import random
+import math
 from pico2d import *
 import game_world
 from state_machine import StateMachine
@@ -29,17 +31,24 @@ class Hit:
 class Die:
     pass
 
+animation_names = ['Fly']
 
 class Duck:
 
     image=None
 
+    def load_images(self):
+        if Duck.images == None:
+            Duck.images = {}
+            for name in animation_names:
+                Duck.images[name] = [load_image("./duck/"+ name + " (%d)" % i + ".png") for i in range(1, 11)]
+
+
     def __init__(self, world):
-        self.x,self.y=400,60
+        self.x,self.y=random.randint(0,800),10
         self.frame=0
         self.face_dir=1
         self.dir=0
-        self.image=load_image('duck.png')
 
         self.IDLE=Idle(self)
         self.FLY=Fly(self)
