@@ -47,14 +47,9 @@ class Duck:
 
     def __init__(self, world):
         self.x,self.y=random.randint(0,800),10
+        self.load_images()
         self.frame=0
-        self.face_dir=1
-        self.dir=0
-
-        self.IDLE=Idle(self)
-        self.FLY=Fly(self)
-        self.HIT=Hit(self)
-        self.DIE=Die(self)
+        self.dir=random.choice([-1,1])
 
 
     def update(self):
