@@ -2,7 +2,8 @@ import random
 import math
 from pico2d import *
 import game_world
-from state_machine import StateMachine
+import game_framework
+
 
 # bird Run Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
@@ -54,14 +55,7 @@ class Duck:
         self.FLY=Fly(self)
         self.HIT=Hit(self)
         self.DIE=Die(self)
-        self.state_machine=StateMachine(
-            self.IDLE,
-            {
-                self.FLY:{},
-                self.HIT:{},
-                self.DIE:{}
-            }
-        )
+
 
     def update(self):
         self.state_machine.update()
