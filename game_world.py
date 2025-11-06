@@ -14,7 +14,7 @@ def remove_object(o):
         if o in layer:
             layer.remove(o)
             return
-    raise Exception("world에 없는 객체를 지우려고 합니다.")
+    raise ValueError('Cannot delete non existing object')
 
 def update():
     for layer in world:
@@ -25,3 +25,9 @@ def render():
     for layer in world:
         for o in list(layer):
             o.draw()
+
+def clear():
+    global world
+
+    for layer in world:
+        layer.clear()
