@@ -36,7 +36,7 @@ animation_names = ['Fly']
 
 class Duck:
 
-    image=None
+    images=None
 
     def load_images(self):
         if Duck.images == None:
@@ -52,13 +52,29 @@ class Duck:
         self.dir=random.choice([-1,1])
 
 
+    def get_bb(self):
+        return self.x - 25, self.y - 25, self.x + 25, self.y + 25
+
     def update(self):
-        self.state_machine.update()
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
+        self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
+        if self.x > 1600:
+            self.dir = -1
+        elif self.x < 800:
+            self.dir = 1
+        self.x = clamp(800, self.x, 1600)
+        pass
 
     def handle_event(self, event):
-        self.state_machine.handle_state_event(('INPUT',event))
         pass
 
     def draw(self):
-        self.state_machine.draw()
+        if self.dir < 0:
+            Duck.images['Walk'][int(self.frame)].composite_draw(0, 'h', self.x, self.y, 200, 200)
+        else:
+            Duck.images['Walk'][int(self.frame)].draw(self.x, self.y, 200, 200)
+
+        #히트박스
+        draw_rectangle(*self.get_bb())
+
 
