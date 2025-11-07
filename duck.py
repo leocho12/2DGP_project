@@ -60,7 +60,7 @@ class Duck:
             self.x - half_width,  # 왼쪽
             self.y - half_height,  # 아래
             self.x + half_width,  # 오른쪽
-            self.y + half_height  # 위
+            self.y # 위
         )
 
     def update(self):
