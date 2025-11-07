@@ -45,7 +45,9 @@ class Duck:
                 Duck.images[name] = [load_image("./duck/"+ name + " (%d)" % i + ".png") for i in range(1, 11)]
 
 
-    def __init__(self, world):
+    def __init__(self, world=None):
+        # world는 선택적 인자로 저장(필요시 사용)
+        self.world = world
         self.x,self.y=random.randint(0,800),10
         self.load_images()
         self.frame=0
@@ -63,18 +65,18 @@ class Duck:
         elif self.x < 800:
             self.dir = 1
         self.x = clamp(800, self.x, 1600)
-        pass
 
     def handle_event(self, event):
         pass
 
     def draw(self):
+        # animation key corrected to 'Fly'
         if self.dir < 0:
-            Duck.images['Walk'][int(self.frame)].composite_draw(0, 'h', self.x, self.y, 200, 200)
+            Duck.images['Fly'][int(self.frame)].composite_draw(0, 'h', self.x, self.y, 200, 200)
         else:
-            Duck.images['Walk'][int(self.frame)].draw(self.x, self.y, 200, 200)
+            Duck.images['Fly'][int(self.frame)].draw(self.x, self.y, 200, 200)
 
-        #히트박스
+        # 히트박스
         draw_rectangle(*self.get_bb())
 
 
