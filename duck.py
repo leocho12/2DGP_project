@@ -5,12 +5,12 @@ import game_world
 import game_framework
 
 
-# bird Run Speed
+# bird Fly Speed
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
-RUN_SPEED_KMPH = 10.0  # Km / Hour
-RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
-RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
-RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+Fly_SPEED_KMPH = 10.0  # Km / Hour
+Fly_SPEED_MPM = (Fly_SPEED_KMPH * 1000.0 / 60.0)
+Fly_SPEED_MPS = (Fly_SPEED_MPM / 60.0)
+Fly_SPEED_PPS = (Fly_SPEED_MPS * PIXEL_PER_METER)
 
 # bird Action Speed
 TIME_PER_ACTION = 0.5
@@ -48,10 +48,13 @@ class Duck:
     def __init__(self, world=None):
         # world는 선택적 인자로 저장(필요시 사용)
         self.world = world
-        self.x,self.y=random.randint(0,800),100
+        self.x=random.randint(0,800)
+        self.y=100#시작 높이
         self.load_images()
         self.frame=0
         self.dir=random.choice([-1,1])
+        self.angle = random.randint(30, 60)  # 30~60도 사이의 각도
+        self.speed = Fly_SPEED_PPS
 
     def get_bb(self):
         half_width = 40  # 이미지 너비의 절반 (80/2)
@@ -65,11 +68,25 @@ class Duck:
 
     def update(self):
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
-        self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
-        if self.x > 800:
-            self.dir = -1
-        elif self.x < 0:
+
+        # 방향 전환 (0.1% 확률)
+        if random.random() < 0.001:
+            self.dir *= -1
+            self.angle = random.randint(30, 60)
+
+        # 대각선 이동 계산 (들여쓰기 수정)
+        angle_rad = math.radians(self.angle)
+        self.x += self.speed * self.dir * math.cos(angle_rad) * game_framework.frame_time
+        self.y += self.speed * math.sin(angle_rad) * game_framework.frame_time
+
+        # 화면 경계 처리
+        if self.x < 0:
             self.dir = 1
+        elif self.x > 800:
+            self.dir = -1
+        if self.y > 500:  # 상단 제한
+            self.y = 500
+
         self.x = clamp(0, self.x, 800)
 
     def handle_event(self, event):
