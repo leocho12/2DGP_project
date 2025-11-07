@@ -70,7 +70,7 @@ class Duck:
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
 
         # 방향 전환 (0.1% 확률)
-        if random.random() < 0.001:
+        if random.random() < 0.005:
             self.dir *= -1
             self.angle = random.randint(30, 60)
 
@@ -84,8 +84,10 @@ class Duck:
             self.dir = 1
         elif self.x > 800:
             self.dir = -1
-        if self.y > 500:  # 상단 제한
-            self.y = 500
+
+        #Y축이 620 이상이면 삭제
+        if self.y > 620:
+            game_world.remove_object(self)
 
         self.x = clamp(0, self.x, 800)
 
