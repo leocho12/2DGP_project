@@ -60,11 +60,11 @@ class Duck:
     def update(self):
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
         self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
-        if self.x > 1600:
+        if self.x > 800:
             self.dir = -1
         elif self.x < 800:
             self.dir = 1
-        self.x = clamp(800, self.x, 1600)
+        self.x = clamp(800, self.x, 800)
 
     def handle_event(self, event):
         pass

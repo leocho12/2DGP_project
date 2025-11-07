@@ -17,7 +17,8 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         else:
-            Duck.handle_event(event)
+            duck.handle_event(event)  # Duck 클래스가 아닌 duck 인스턴스의 메서드 호출
+
 
 def init():
     global duck
