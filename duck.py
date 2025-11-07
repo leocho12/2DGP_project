@@ -48,23 +48,29 @@ class Duck:
     def __init__(self, world=None):
         # world는 선택적 인자로 저장(필요시 사용)
         self.world = world
-        self.x,self.y=random.randint(0,800),10
+        self.x,self.y=random.randint(0,800),100
         self.load_images()
         self.frame=0
         self.dir=random.choice([-1,1])
 
-
     def get_bb(self):
-        return self.x - 25, self.y - 25, self.x + 25, self.y + 25
+        half_width = 40  # 이미지 너비의 절반 (80/2)
+        half_height = 40  # 이미지 높이의 절반 (80/2)
+        return (
+            self.x - half_width,  # 왼쪽
+            self.y - half_height,  # 아래
+            self.x + half_width,  # 오른쪽
+            self.y + half_height  # 위
+        )
 
     def update(self):
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
         self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
         if self.x > 800:
             self.dir = -1
-        elif self.x < 800:
+        elif self.x < 0:
             self.dir = 1
-        self.x = clamp(800, self.x, 800)
+        self.x = clamp(0, self.x, 800)
 
     def handle_event(self, event):
         pass
@@ -72,9 +78,9 @@ class Duck:
     def draw(self):
         # animation key corrected to 'Fly'
         if self.dir < 0:
-            Duck.images['Fly'][int(self.frame)].composite_draw(0, 'h', self.x, self.y, 200, 200)
+            Duck.images['Fly'][int(self.frame)].composite_draw(0, 'h', self.x, self.y, 80, 80)
         else:
-            Duck.images['Fly'][int(self.frame)].draw(self.x, self.y, 200, 200)
+            Duck.images['Fly'][int(self.frame)].draw(self.x, self.y, 80, 80)
 
         # 히트박스
         draw_rectangle(*self.get_bb())
