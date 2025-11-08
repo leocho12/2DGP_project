@@ -47,16 +47,16 @@ class Gun:
             draw_rectangle(self.x - w // 2, self.y - h // 2, self.x + w // 2, self.y + h // 2)
 
 
-def fire(self):
-    self.recoil_timer = self.recoil_duration
-    # 총알 발사 효과음 재생 (효과음 파일이 있다고 가정)
+    def fire(self):
+        self.recoil_timer = self.recoil_duration
+        # 총알 발사 효과음 재생 (효과음 파일이 있다고 가정)
 
-    # 충돌 검사
-    duck_layer = game_world.world[1]  # 오리들이 있는 레이어
+        # 충돌 검사
+        duck_layer = game_world.world[1]  # 오리들이 있는 레이어
 
-    for i in list(duck_layer):
-        if hasattr(i,'get_bb'):
-            bb=i.get_bb()
-            if _point_in_bb(self.x, self.y, bb):
-                game_world.remove_object(i)
-                break  # 한 번에 하나의 오리만 맞출 수 있도록
+        for i in list(duck_layer):
+            if hasattr(i,'get_bb'):
+                bb=i.get_bb()
+                if _point_in_bb(self.x, self.y, bb):
+                    game_world.remove_object(i)
+                    break  # 한 번에 하나의 오리만 맞출 수 있도록
