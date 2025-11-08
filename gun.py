@@ -17,7 +17,11 @@ class Gun:
         self.recoil_timer=0.0
         self.recoil_duration=0.12
         self.world=world
-        self.image=load_image('gun.png')
+        if Gun.image is None:
+            try:
+                Gun.image = load_image('gun.png')
+            except Exception:
+                Gun.image = None
 
     def update(self):
         if self.recoil_timer > 0.0:
