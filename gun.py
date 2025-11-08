@@ -11,7 +11,8 @@ def _point_in_bb(px, py, bb):
 class Gun:
     image = None
 
-    def __init__(self,world):
+    def __init__(self,world=None):
+        self.world = world
         self.x, self.y=400,60
         self.frame=0
         self.recoil_timer=0.0
