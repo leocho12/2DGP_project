@@ -103,5 +103,3 @@ class Duck:
 
         # 히트박스
         draw_rectangle(*self.get_bb())
-
-
