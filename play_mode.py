@@ -7,7 +7,7 @@ import game_world
 from duck import Duck
 from map import Map
 
-duck = None
+ducks = []
 
 def handle_events():
     event_list = get_events()
@@ -17,17 +17,21 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         else:
-            duck.handle_event(event)  # Duck 클래스가 아닌 duck 인스턴스의 메서드 호출
+            for duck in ducks:
+                duck.handle_event(event)  # Duck 클래스가 아닌 duck 인스턴스의 메서드 호출
 
 
 def init():
-    global duck
+    global ducks
 
-    map = Map()
-    game_world.add_object(map, 0)
+    game_map = Map()
+    game_world.add_object(game_map, 0)
 
-    duck = Duck()
-    game_world.add_object(duck, 1)
+    NUM_DUCK=5
+    for _ in range(NUM_DUCK):
+        duck = Duck()
+        ducks.append(duck)
+        game_world.add_object(duck, 1)
 
 
 def update():
@@ -42,6 +46,7 @@ def draw():
 
 def finish():
     game_world.clear()
+    ducks.clear()
 
 def pause(): pass
 def resume(): pass
