@@ -5,7 +5,7 @@ world = [[], [], [],[]]  # 게임 내 객체들을 담는 리스트
 
 LAYER_BACKGROUND = 0    # 배경 레이어
 LAYER_FOREGROUND = 1    # 오리 레이어
-LAYER_ = 2    # 풀 레이어
+LAYER_GRASS = 2    # 풀 레이어
 LAYER_UI = 3           # UI 레이어
 
 def add_object(o, depth=0):
