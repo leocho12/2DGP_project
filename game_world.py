@@ -1,6 +1,3 @@
-# layer 0: Background Objects
-# layer 1: Foreground Objects
-
 world = [[], [], [],[]]  # 게임 내 객체들을 담는 리스트
 
 LAYER_BACKGROUND = 0    # 배경 레이어
