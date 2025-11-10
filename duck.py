@@ -56,7 +56,7 @@ class Duck:
         self.angle = random.randint(30, 60)  # 30~60도 사이의 각도
         self.speed = Fly_SPEED_PPS
         # 상승 속도 비율 (0.0 ~ 1.0, 작을수록 상승이 느려짐)
-        self.upward_scale = 1.5
+        self.upward_scale = 1.0
 
     def get_bb(self):
         half_width = 40  # 이미지 너비의 절반 (80/2)
