@@ -55,6 +55,8 @@ class Duck:
         self.dir=random.choice([-1,1])
         self.angle = random.randint(30, 60)  # 30~60도 사이의 각도
         self.speed = Fly_SPEED_PPS
+        # 상승 속도 비율 (0.0 ~ 1.0, 작을수록 상승이 느려짐)
+        self.upward_scale = 1.5
 
     def get_bb(self):
         half_width = 40  # 이미지 너비의 절반 (80/2)
@@ -76,8 +78,13 @@ class Duck:
 
         # 대각선 이동 계산 (들여쓰기 수정)
         angle_rad = math.radians(self.angle)
+        # 가로 이동
         self.x += self.speed * self.dir * math.cos(angle_rad) * game_framework.frame_time
-        self.y += self.speed * math.sin(angle_rad) * game_framework.frame_time
+        # 세로 이동: 상승일 때만 scale 적용
+        vertical = self.speed * math.sin(angle_rad) * game_framework.frame_time
+        if vertical > 0:
+            vertical *= self.upward_scale
+        self.y += vertical
 
         # 화면 경계 처리
         if self.x < 0:
