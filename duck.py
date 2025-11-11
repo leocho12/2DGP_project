@@ -57,6 +57,9 @@ class Duck:
         self.speed = Fly_SPEED_PPS
         # 상승 속도 비율 (0.0 ~ 1.0, 작을수록 상승이 느려짐)
         self.upward_scale = 1.0
+        # 체력
+        self.max_hp=3
+        self.hp=self.max_hp
 
     def get_bb(self):
         half_width = 40  # 이미지 너비의 절반 (80/2)
@@ -67,6 +70,12 @@ class Duck:
             self.x + half_width,  # 오른쪽
             self.y # 위
         )
+
+    def take_damage(self, damage):
+        self.hp-=damage
+        if self.hp <=0:
+            return True
+        return False
 
     def update(self):
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION

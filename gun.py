@@ -20,13 +20,14 @@ class Gun:
         self.recoil_timer=0.0
         self.recoil_duration=0.12
         self.world=world
-
         #재장전 변수
         self.max_ammo=3
         self.ammo=self.max_ammo
         self.reloading=False
         self.reloading_duration=1.5
         self.reload_timer=0.0
+        # 데미지
+        self.damage=1
 
         if Gun.image is None:
             try:
