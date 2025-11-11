@@ -9,6 +9,7 @@ def _point_in_bb(px, py, bb):
     return l <= px <= r and b <= py <= t
 
 class Gun:
+    bullet_image = None
     image = None
 
     def __init__(self,world=None):
@@ -32,6 +33,12 @@ class Gun:
                 Gun.image = load_image('gun.png')
             except Exception:
                 Gun.image = None
+
+        if Gun.bullet_image is None:
+            try:
+                Gun.bullet_image = load_image('bullet.png')
+            except Exception:
+                Gun.bullet_image = None
 
     def update(self):
         # 반동 타이머
@@ -89,17 +96,32 @@ class Gun:
         box_h = 12
         gap = 6
 
+        if self.reloading:
+            # 경과 시간 계산
+            elapsed = self.reloading_duration - self.reload_timer
+            # 각 총알이 채워지는 시간 간격
+            time_per_bullet = self.reloading_duration / self.max_ammo
+            # 현재까지 채워진 총알 수
+            bullets_loaded = int(elapsed / time_per_bullet)
+            bullets_loaded = min(bullets_loaded, self.max_ammo)
+        else:
+            bullets_loaded=self.ammo
+
         for i in range(self.max_ammo):
             bx = base_x + i * (box_w + gap)
             by = base_y
-            # outer box
-            draw_rectangle(bx - box_w // 2, by - box_h // 2, bx + box_w // 2, by + box_h // 2)
-            # filled inner if bullet exists
-            if i < self.ammo and not self.reloading:
-                # smaller rect to simulate filled
-                draw_rectangle(bx - (box_w // 2 - 2), by - (box_h // 2 - 2), bx + (box_w // 2 - 2),
-                               by + (box_h // 2 - 2))
-        # show reloading indicator as simple rectangle blinking (when reloading)
+
+            # 채워진 슬롯이면 총알 이미지 표시
+            if i < bullets_loaded:
+                if Gun.bullet_image:
+                    Gun.bullet_image.draw(bx, by, box_w - 4, box_h - 4)
+                else:
+                    # 이미지 없을 경우 채워진 사각형으로 대체
+                    draw_rectangle(bx - (box_w // 2 - 2), by - (box_h // 2 - 2),
+                                   bx + (box_w // 2 - 2), by + (box_h // 2 - 2))
+            else:
+                # 빈 슬롯은 테두리만 보여줌 (기존 동작 유지)
+                pass
         if self.reloading:
             # draw a larger outline around boxes to indicate reloading
             draw_rectangle(base_x - 12, base_y - 16, base_x + (box_w + gap) * self.max_ammo - gap + 12, base_y + 16)
