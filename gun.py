@@ -153,7 +153,13 @@ class Gun:
             if hasattr(i,'get_bb'):
                 bb=i.get_bb()
                 if _point_in_bb(self.x, self.y, bb):
-                    game_world.remove_object(i)
+                    # 오리 피격 처리
+                    if hasattr(i,'take_damage'):
+                        dead=i.take_damage(self.damage)
+                        if dead:
+                            game_world.remove_object(i)
+                    else:
+                        game_world.remove_object(i)
                     break  # 한 번에 하나의 오리만 맞출 수 있도록
 
     # 재장전 함수
