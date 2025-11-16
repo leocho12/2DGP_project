@@ -141,7 +141,7 @@ class Gun:
         self.recoil_timer = self.recoil_duration
         self.ammo-=1
 
-        # 총알 발사 효과음 재생 (효과음 파일이 있다고 가정)
+        # 총알 발사 효과음 재생
 
         # 충돌 검사
         try:
@@ -150,16 +150,18 @@ class Gun:
             duck_layer = []
 
         for i in list(duck_layer):
-            if hasattr(i,'get_bb'):
-                bb=i.get_bb()
+            if hasattr(i, 'get_bb'):
+                bb = i.get_bb()
                 if _point_in_bb(self.x, self.y, bb):
-                    # 오리 피격 처리
-                    if hasattr(i,'take_damage'):
-                        dead=i.take_damage(self.damage)
-                        if dead:
-                            game_world.remove_object(i)
+                    # 오브젝트에게 데미지 위임 — 오브젝트가 죽음/애니메이션 처리를 직접 함
+                    if hasattr(i, 'take_damage'):
+                        i.take_damage(self.damage)
                     else:
-                        game_world.remove_object(i)
+                        # 만약 take_damage가 없으면 기존처럼 즉시 제거
+                        try:
+                            game_world.remove_object(i)
+                        except Exception:
+                            pass
                     break  # 한 번에 하나의 오리만 맞출 수 있도록
 
     # 재장전 함수

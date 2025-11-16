@@ -99,6 +99,9 @@ class Duck:
             self.hit_timer = self.hit_duration
             self.frame = 0.0
 
+    def handle_event(self, event):
+        pass
+
     def update(self):
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
         if self.state == 'Fly':
