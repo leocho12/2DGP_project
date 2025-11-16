@@ -69,7 +69,7 @@ class Duck:
 
     def get_bb(self):
         # 죽으면 히트박스 비활성화
-        if self.state == 'Die':
+        if self.state != 'Fly':
             return (0, 0, 0, 0)
         half_width = 40  # 이미지 너비의 절반 (80/2)
         half_height = 40  # 이미지 높이의 절반 (80/2)
@@ -82,7 +82,7 @@ class Duck:
 
     def take_damage(self, damage):
         # 이미 죽었거나 히트 상태라면 무시
-        if self.state == 'Die':
+        if self.state in ('Hit', 'Die'):
             return
         # 데미지 적용
         self.hp -= damage
