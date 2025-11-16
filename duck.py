@@ -148,7 +148,7 @@ class Duck:
             self.die_rotate += self.die_rotate_speed * game_framework.frame_time
 
             # 화면 아래로 충분히 떨어지면 제거
-            if self.y < -100:
+            if self.y < 80:
                 try:
                     game_world.remove_object(self)
                 except Exception:
