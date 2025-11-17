@@ -13,6 +13,7 @@ ducks = []
 gun = None
 grass = None
 
+WAVE_SIZE=2
 
 def handle_events():
     event_list = get_events()
@@ -36,8 +37,7 @@ def init():
     game_world.add_object(background, game_world.LAYER_BACKGROUND)
 
     # Ducks (레이어 1)
-    NUM_DUCK = 5
-    for _ in range(NUM_DUCK):
+    for _ in range(WAVE_SIZE):
         duck = Duck()
         ducks.append(duck)
         game_world.add_object(duck, game_world.LAYER_FOREGROUND)
@@ -52,8 +52,17 @@ def init():
 
 
 def update():
+    global ducks
     game_world.update()
 
+    current_ducks=[o for o in game_world.world[game_world.LAYER_FOREGROUND] if isinstance(o,Duck)]
+    ducks=current_ducks
+
+    if len(ducks)==0:
+        for _ in range(WAVE_SIZE):
+            duck = Duck()
+            ducks.append(duck)
+            game_world.add_object(duck, game_world.LAYER_FOREGROUND)
 
 def draw():
     clear_canvas()
