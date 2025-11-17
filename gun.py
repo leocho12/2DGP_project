@@ -129,40 +129,40 @@ class Gun:
 
     # 발사 함수
     def fire(self):
-
         # 장전중 발사 금지
         if self.reloading:
             return
         # 잔탄 없으면 자동 재장전
-        if self.ammo<=0:
+        if self.ammo <= 0:
             self.start_reload()
             return
         # 잔탄 감소
         self.recoil_timer = self.recoil_duration
-        self.ammo-=1
+        self.ammo -= 1
 
-        # 총알 발사 효과음 재생
+        # 충돌 검사 - LAYER_FOREGROUND와 LAYER_UI 모두 검사
+        layers_to_check = [game_world.LAYER_FOREGROUND, game_world.LAYER_UI]
 
-        # 충돌 검사
-        try:
-            duck_layer = game_world.world[1]
-        except Exception:
-            duck_layer = []
+        for layer_index in layers_to_check:
+            try:
+                layer = game_world.world[layer_index]
+            except Exception:
+                continue
 
-        for i in list(duck_layer):
-            if hasattr(i, 'get_bb'):
-                bb = i.get_bb()
-                if _point_in_bb(self.x, self.y, bb):
-                    # 오브젝트에게 데미지 위임 — 오브젝트가 죽음/애니메이션 처리를 직접 함
-                    if hasattr(i, 'take_damage'):
-                        i.take_damage(self.damage)
-                    else:
-                        # 만약 take_damage가 없으면 기존처럼 즉시 제거
-                        try:
-                            game_world.remove_object(i)
-                        except Exception:
-                            pass
-                    break  # 한 번에 하나의 오리만 맞출 수 있도록
+            for i in list(layer):
+                if hasattr(i, 'get_bb'):
+                    bb = i.get_bb()
+                    if _point_in_bb(self.x, self.y, bb):
+                        # 오브젝트에게 데미지 위임
+                        if hasattr(i, 'take_damage'):
+                            i.take_damage(self.damage)
+                        else:
+                            # take_damage가 없으면 즉시 제거
+                            try:
+                                game_world.remove_object(i)
+                            except Exception:
+                                pass
+                        return  # 한 번에 하나의 오브젝트만 맞출 수 있도록
 
     # 재장전 함수
     def start_reload(self):
