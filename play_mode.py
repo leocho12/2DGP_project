@@ -7,9 +7,11 @@ import game_world
 from duck import Duck
 from map import Background, Grass
 from gun import Gun
+from kamikaze import Kamikaze
 
 
 ducks = []
+kamikazes=[]
 gun = None
 grass = None
 
@@ -30,7 +32,7 @@ def handle_events():
 
 
 def init():
-    global ducks, gun, grass
+    global ducks, gun, grass, kamikazes
 
     # Background (레이어 0)
     background = Background()
@@ -41,8 +43,13 @@ def init():
         duck = Duck()
         ducks.append(duck)
         game_world.add_object(duck, game_world.LAYER_FOREGROUND)
+    # Kamikazes (레이어 1)
+    for _ in range(WAVE_SIZE):
+        kamikaze = Kamikaze()
+        kamikazes.append(kamikaze)
+        game_world.add_object(kamikaze, game_world.LAYER_FOREGROUND)
 
-    # Grass (레이어 2) - 앞쪽 레이어로 추가하여 오리가 풀보다 뒤에 나오도록 함
+    # Grass (레이어 2)
     grass = Grass()
     game_world.add_object(grass, game_world.LAYER_GRASS)
 
@@ -52,7 +59,7 @@ def init():
 
 
 def update():
-    global ducks
+    global ducks, kamikazes
     game_world.update()
 
     current_ducks=[o for o in game_world.world[game_world.LAYER_FOREGROUND] if isinstance(o,Duck)]
@@ -63,6 +70,12 @@ def update():
             duck = Duck()
             ducks.append(duck)
             game_world.add_object(duck, game_world.LAYER_FOREGROUND)
+
+    if len(kamikazes)==0:
+        for _ in range(WAVE_SIZE):
+            kamikaze = Kamikaze()
+            kamikazes.append(kamikaze)
+            game_world.add_object(kamikaze, game_world.LAYER_FOREGROUND)
 
 def draw():
     clear_canvas()
