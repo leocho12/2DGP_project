@@ -15,7 +15,8 @@ kamikazes=[]
 gun = None
 grass = None
 
-WAVE_SIZE=2
+WAVE_SIZE=2 # 웨이브당 오리 수
+KAMIKAZE_PER_WAVE=1 # 웨이브당 자폭 오리 수
 
 def handle_events():
     event_list = get_events()
@@ -44,7 +45,7 @@ def init():
         ducks.append(duck)
         game_world.add_object(duck, game_world.LAYER_FOREGROUND)
     # Kamikazes (레이어 1)
-    for _ in range(WAVE_SIZE):
+    for _ in range(KAMIKAZE_PER_WAVE):
         kamikaze = Kamikaze()
         kamikazes.append(kamikaze)
         game_world.add_object(kamikaze, game_world.LAYER_FOREGROUND)
@@ -65,6 +66,9 @@ def update():
     current_ducks=[o for o in game_world.world[game_world.LAYER_FOREGROUND] if isinstance(o,Duck)]
     ducks=current_ducks
 
+    current_kamikazes = [o for o in game_world.world[game_world.LAYER_FOREGROUND] if isinstance(o, Kamikaze)]
+    kamikazes = current_kamikazes
+
     if len(ducks)==0:
         for _ in range(WAVE_SIZE):
             duck = Duck()
@@ -72,7 +76,7 @@ def update():
             game_world.add_object(duck, game_world.LAYER_FOREGROUND)
 
     if len(kamikazes)==0:
-        for _ in range(WAVE_SIZE):
+        for _ in range(KAMIKAZE_PER_WAVE):
             kamikaze = Kamikaze()
             kamikazes.append(kamikaze)
             game_world.add_object(kamikaze, game_world.LAYER_FOREGROUND)
@@ -87,6 +91,7 @@ def finish():
     global gun, grass
     game_world.clear()
     ducks.clear()
+    kamikazes.clear()
     gun = None
     grass = None
 
