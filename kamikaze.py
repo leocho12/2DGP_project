@@ -36,12 +36,12 @@ class Kamikaze:
 
     def __init__(self, x=None, y=100, angle_deg=None, target=None):
         self.load_images()
-        self.x = random.randint(50, 750) if x is None else x
+        self.x = random.randint(100, 700) if x is None else x
         self.y = y
         self.frame = 0.0
         self.state = 'Idle'
         self.speed = 180.0
-        self.activation_range = 420.0
+        self.activation_range = 120.0
         self.blast_radius = 80.0
         self.explosion_damage = 2
         self.target = target

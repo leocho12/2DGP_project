@@ -39,7 +39,7 @@ def spawn_wave():
     for _ in range(KAMIKAZE_PER_WAVE):
         kamikaze = Kamikaze()
         kamikazes.append(kamikaze)
-        game_world.add_object(kamikaze, game_world.LAYER_FOREGROUND)
+        game_world.add_object(kamikaze, game_world.LAYER_GRASS)
 
 def init():
     global ducks, gun, grass, kamikazes
