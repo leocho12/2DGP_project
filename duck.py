@@ -48,7 +48,7 @@ class Duck:
         # world는 선택적 인자로 저장(필요시 사용)
         self.world = world
         self.x=random.randint(0,800)
-        self.y=100#시작 높이
+        self.y=100
         self.load_images()
         self.frame=0
         self.dir=random.choice([-1,1])

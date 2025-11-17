@@ -12,6 +12,7 @@ FRAMES_PER_ACTION = 3.0
 
 class Kamikaze:
     images = None
+    explode_images = None
 
     def load_images(self):
         if Kamikaze.images is None:
@@ -23,23 +24,40 @@ class Kamikaze:
                 except Exception:
                     pass
 
-    def __init__(self, x=None, y=60, target=None):
+        # 폭발 애니메이션 프레임 로드 (Explode 1~9)
+        if Kamikaze.explode_images is None:
+            Kamikaze.explode_images = []
+            for i in range(1, 10):
+                path = f"./duck/Explode ({i}).png"
+                try:
+                    Kamikaze.explode_images.append(load_image(path))
+                except Exception:
+                    pass
+
+    def __init__(self, x=None, y=100, angle_deg=None, target=None):
         self.load_images()
         self.x = random.randint(50, 750) if x is None else x
         self.y = y
         self.frame = 0.0
         self.state = 'Idle'
-        self.speed = 180.0     # 돌진 속도
+        self.speed = 180.0
         self.activation_range = 420.0
         self.blast_radius = 80.0
         self.explosion_damage = 2
         self.target = target
-        self.explode_duration = 0.6  # 폭발 애니메이션 총 시간
+        self.explode_duration = 0.45  # 9프레임 * 0.05초 = 0.45초
         self.explode_timer = 0.0
-        self.base_scale=0.6
-        self.max_scale=2.0
-        self.current_scale=self.base_scale
+        self.explode_frame = 0.0
+        self.base_scale = 0.6
+        self.max_scale = 2.0
+        self.current_scale = self.base_scale
 
+        # 초기 진행 방향 (생성 위치에서 앞으로 직진)
+        if angle_deg is None:
+            angle_deg = -90 + random.uniform(-12.0, 12.0)
+        rad = math.radians(angle_deg)
+        self.vx = math.cos(rad)
+        self.vy = math.sin(rad)
 
     def get_image_size(self):
         if Kamikaze.images and len(Kamikaze.images) > 0:
@@ -85,27 +103,24 @@ class Kamikaze:
 
     def update(self):
         dt = game_framework.frame_time
-        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * dt) % FRAMES_PER_ACTION
 
         player = self.find_player()
-        tx, ty = get_canvas_width() / 2, 60
+        tx, ty = (player.x, player.y) if player else (get_canvas_width() / 2, 60)
 
         if self.state == 'Idle':
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * dt) % FRAMES_PER_ACTION
             dist = self.distance_to(tx, ty)
             if dist <= self.activation_range:
                 self.state = 'Charge'
         elif self.state == 'Charge':
-            # 화면(플레이어) 쪽으로 이동
-            dx = tx - self.x
-            dy = ty - self.y
-            dist = math.hypot(dx, dy)
-            if dist > 1e-5:
-                nx = dx / dist
-                ny = dy / dist
-                self.x += nx * self.speed * dt
-                self.y += ny * self.speed * dt
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * dt) % FRAMES_PER_ACTION
 
-            # 거리 기반 스케일: 가까워질수록 커짐
+            # 자신의 초기 전진 방향으로 직진
+            self.x += self.vx * self.speed * dt
+            self.y += self.vy * self.speed * dt
+
+            # 플레이어와의 거리로 스케일 조절
+            dist = self.distance_to(tx, ty)
             if dist < self.activation_range:
                 progress = max(0.0, min(1.0, 1.0 - (dist / max(1.0, self.activation_range))))
             else:
@@ -116,34 +131,54 @@ class Kamikaze:
             if dist <= self.blast_radius:
                 self.state = 'Explode'
                 self.explode_timer = self.explode_duration
+                self.explode_frame = 0.0
                 self.deal_damage_to_player()
-        elif self.state == 'Explode':
-            # 폭발 중에는 더 크게 보여줌 (애니메이션 진행률로 추가 증폭)
-            self.explode_timer -= dt
-            if self.explode_timer <= 0.0:
+
+            # 화면 밖으로 나가면 제거
+            if self.x < -200 or self.x > get_canvas_width() + 200 or self.y < -200 or self.y > get_canvas_height() + 200:
                 try:
                     game_world.remove_object(self)
                 except Exception:
                     pass
+
+        elif self.state == 'Explode':
+            # 폭발 애니메이션: Duck과 동일한 방식으로 프레임 진행
+            if Kamikaze.explode_images:
+                total_frames = len(Kamikaze.explode_images)
+                frame_duration = self.explode_duration / total_frames
+
+                self.explode_timer -= dt
+                self.explode_frame += (total_frames / self.explode_duration) * dt
+
+                if self.explode_frame >= total_frames:
+                    try:
+                        game_world.remove_object(self)
+                    except Exception:
+                        pass
             else:
-                prog = 1.0 - (self.explode_timer / max(self.explode_duration, 1e-6))
-                # 폭발시 스케일을 좀 더 키움
-                self.current_scale = self.base_scale + (self.max_scale - self.base_scale) * (0.8 + 0.2 * prog)
+                self.explode_timer -= dt
+                if self.explode_timer <= 0.0:
+                    try:
+                        game_world.remove_object(self)
+                    except Exception:
+                        pass
 
     def draw(self):
-        if self.state == 'Explode' and Kamikaze.images:
-            total_frames = len(Kamikaze.images)
+        if self.state == 'Explode' and Kamikaze.explode_images:
+            # 폭발 애니메이션 그리기
+            total_frames = len(Kamikaze.explode_images)
             if total_frames == 0:
                 return
-            progress = max(0.0, min(1.0, 1.0 - (self.explode_timer / max(self.explode_duration, 1e-6))))
-            idx = int(progress * (total_frames - 1))
-            img = Kamikaze.images[idx]
-            w = getattr(img, 'w', 64) * self.current_scale
-            h = getattr(img, 'h', 64) * self.current_scale
+            idx = int(self.explode_frame) % total_frames
+            img = Kamikaze.explode_images[idx]
+            w = getattr(img, 'w', 100) * self.current_scale
+            h = getattr(img, 'h', 100) * self.current_scale
             img.draw(self.x, self.y, w, h)
         else:
+            # Idle/Charge 상태: Boom 이미지 그리기
             if Kamikaze.images:
-                img = Kamikaze.images[0]
+                idx = int(self.frame) % max(1, len(Kamikaze.images))
+                img = Kamikaze.images[idx]
                 w = getattr(img, 'w', 48) * self.current_scale
                 h = getattr(img, 'h', 48) * self.current_scale
                 img.draw(self.x, self.y, w, h)
