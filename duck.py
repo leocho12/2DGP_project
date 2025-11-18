@@ -28,7 +28,6 @@ class Duck:
             Duck.images = {}
             for name in animation_names:
                 frames = []
-                # numbered frames like "Fly (1).png"
                 for i in range(1, 4):
                     path = f"./duck/{name} ({i}).png"
                     try:

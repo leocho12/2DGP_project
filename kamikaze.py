@@ -1,4 +1,5 @@
 from pico2d import *
+from damage_overlay import DamageOverlay
 import math
 import random
 
@@ -13,6 +14,7 @@ FRAMES_PER_ACTION = 3.0
 class Kamikaze:
     images = None
     explode_images = None
+    damage=None
 
     def load_images(self):
         if Kamikaze.images is None:
@@ -24,7 +26,7 @@ class Kamikaze:
                 except Exception:
                     pass
 
-        # 폭발 애니메이션 프레임 로드 (Explode 1~9)
+        # 폭발 애니메이션
         if Kamikaze.explode_images is None:
             Kamikaze.explode_images = []
             for i in range(1, 10):
@@ -52,7 +54,7 @@ class Kamikaze:
         self.speed = 180.0
         self.activation_range = 300.0
         self.blast_radius = 80.0
-        self.explosion_damage = 2
+        self.explosion_damage = 1
         self.target = target
         self.explode_duration = 0.45
         self.explode_timer = 0.0
@@ -104,10 +106,10 @@ class Kamikaze:
         if player is None:
             return
         if hasattr(player, 'take_damage'):
-            try:
-                player.take_damage(self.explosion_damage)
-            except Exception:
-                pass
+            player.take_damage(self.damage)
+            overlay = DamageOverlay()
+            game_world.add_object(overlay, game_world.LAYER_UI)
+
         elif hasattr(player, 'hp'):
             try:
                 player.hp -= self.explosion_damage
@@ -118,10 +120,8 @@ class Kamikaze:
         if self.state == 'Explode':
             return
 
-        self.state = 'Explode'
-        self.explode_timer = self.explode_duration
-        self.explode_frame = 0.0
-        self.deal_damage_to_player()
+        game_world.remove_object(self)
+
 
     def update(self):
         dt = game_framework.frame_time
