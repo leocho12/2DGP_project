@@ -138,13 +138,13 @@ class Kamikaze:
             total_distance = abs(400 - start_x)  # 400까지의 총 거리 (300)
             current_distance = abs(self.x - start_x)  # 현재까지 이동한 거리
 
-            # 진행도 계산 (0.0 ~ 1.0)
+            # 진행도 계산
             progress = min(1.0, current_distance / total_distance)
 
-            # 크기 조절: 1.0 → 2.0
+            # 크기 조절
             self.current_scale = self.base_scale + progress * (self.max_scale - self.base_scale)
 
-            # x=400 근처에 도달하면 폭발 (오차 범위 ±10)
+            # x=400 근처에 도달하면 폭발
             if abs(self.x - 400) <= 10:
                 self.state = 'Explode'
                 self.explode_timer = self.explode_duration
