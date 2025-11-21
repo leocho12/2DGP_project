@@ -29,6 +29,10 @@ class Gun:
         # 데미지
         self.damage=1
 
+        # 플레이어 체력
+        self.max_hp = 5
+        self.hp = self.max_hp
+
         if Gun.image is None:
             try:
                 Gun.image = load_image('gun.png')
@@ -127,6 +131,22 @@ class Gun:
             # draw a larger outline around boxes to indicate reloading
             draw_rectangle(base_x - 12, base_y - 16, base_x + (box_w + gap) * self.max_ammo - gap + 12, base_y + 16)
 
+        # 플레이어 HP 표시 (오른쪽에 작은 박스들)
+        hp_box_w = 12
+        hp_box_h = 12
+        hp_base_x = base_x + (box_w + gap) * self.max_ammo + 20
+        hp_base_y = base_y
+        for i in range(self.max_hp):
+            hx = hp_base_x + i * (hp_box_w + 4)
+            hy = hp_base_y
+            # 체력이 남아있으면 테두리로 표시 (이미지 없음)
+            draw_rectangle(hx - hp_box_w//2, hy - hp_box_h//2, hx + hp_box_w//2, hy + hp_box_h//2)
+            # 체력이 남은 슬롯은 내부를 채운 것처럼 보이게 작은 추가 사각형을 그림
+            if i < self.hp:
+                inner = 3
+                draw_rectangle(hx - hp_box_w//2 + inner, hy - hp_box_h//2 + inner,
+                               hx + hp_box_w//2 - inner, hy + hp_box_h//2 - inner)
+
     # 발사 함수
     def fire(self):
         # 장전중 발사 금지
@@ -169,3 +189,14 @@ class Gun:
         if not self.reloading and self.ammo < self.max_ammo:
             self.reloading = True
             self.reload_timer = self.reloading_duration
+
+    # 플레이어(총)에게 데미지를 입히는 함수 (자폭 오리에서 호출됨)
+    def take_damage(self, damage):
+        try:
+            self.hp -= damage
+        except Exception:
+            return
+        if self.hp <= 0:
+            self.hp = 0
+            # 체력 0 처리: 현재는 게임 종료 또는 추가 처리 없이 0으로 고정
+            # 필요하면 여기서 게임 오버 상태 전환을 구현할 수 있음
