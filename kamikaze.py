@@ -1,3 +1,5 @@
+# python
+# 파일: `kamikaze.py`
 from pico2d import *
 from damage_overlay import DamageOverlay
 import math
@@ -102,14 +104,20 @@ class Kamikaze:
         return None
 
     def deal_damage_to_player(self):
+        # 중앙 도달 시에만 호출되며, 여기서 데미지 오버레이를 생성함
+        overlay = DamageOverlay()
+        game_world.add_object(overlay, game_world.LAYER_UI)
+
         player = self.find_player()
         if player is None:
             return
-        if hasattr(player, 'take_damage'):
-            player.take_damage(self.damage)
-            overlay = DamageOverlay()
-            game_world.add_object(overlay, game_world.LAYER_UI)
 
+        # 플레이어에게 실제 데미지 전달(가능하면)
+        if hasattr(player, 'take_damage'):
+            try:
+                player.take_damage(self.explosion_damage)
+            except Exception:
+                pass
         elif hasattr(player, 'hp'):
             try:
                 player.hp -= self.explosion_damage
@@ -117,10 +125,13 @@ class Kamikaze:
                 pass
 
     def take_damage(self, damage):
+        # 피격 처리는 그대로: 폭발 상태가 아니면 제거되도록 유지
         if self.state == 'Explode':
             return
-
-        game_world.remove_object(self)
+        try:
+            game_world.remove_object(self)
+        except Exception:
+            pass
 
 
     def update(self):
