@@ -39,7 +39,8 @@ def spawn_wave():
     for _ in range(KAMIKAZE_PER_WAVE):
         kamikaze = Kamikaze()
         kamikazes.append(kamikaze)
-        game_world.add_object(kamikaze, game_world.LAYER_UI)
+        # Kamikaze는 오리와 같은 전경 레이어에 추가하여 일관성 유지
+        game_world.add_object(kamikaze, game_world.LAYER_FOREGROUND)
 
 def init():
     global ducks, gun, grass, kamikazes
@@ -48,15 +49,16 @@ def init():
     background = Background()
     game_world.add_object(background, game_world.LAYER_BACKGROUND)
 
-    spawn_wave()
-
     # Grass (레이어 2)
     grass = Grass()
     game_world.add_object(grass, game_world.LAYER_GRASS)
 
-    # Gun (레이어 3 / UI)
+    # Gun (레이어 3 / UI) — 플레이어는 먼저 생성되어야 함
     gun = Gun()
     game_world.add_object(gun, game_world.LAYER_UI)
+
+    # 오브젝트(오리/자폭) 스폰은 플레이어가 준비된 이후에 수행
+    spawn_wave()
 
 
 def update():

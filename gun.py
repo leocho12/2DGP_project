@@ -213,11 +213,11 @@ class Gun:
 
     # 플레이어(총)에게 데미지를 입히는 함수 (자폭 오리에서 호출됨)
     def take_damage(self, damage):
+        # 데미지 적용
         try:
             self.hp -= damage
         except Exception:
             return
         if self.hp <= 0:
             self.hp = 0
-            # 체력 0 처리: 현재는 게임 종료 또는 추가 처리 없이 0으로 고정
-            # 필요하면 여기서 게임 오버 상태 전환을 구현할 수 있음
+            # 체력 0 처리: 필요하면 여기서 게임 오버 상태 전환을 구현

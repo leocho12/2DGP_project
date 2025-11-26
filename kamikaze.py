@@ -2,6 +2,7 @@
 # 파일: `kamikaze.py`
 from pico2d import *
 from damage_overlay import DamageOverlay
+from gun import Gun
 import math
 import random
 
@@ -93,11 +94,14 @@ class Kamikaze:
         return math.hypot(self.x - tx, self.y - ty)
 
     def find_player(self):
+        # 우선 타겟이 지정되어 있으면 그것을 사용
         if self.target:
             return self.target
+
+        # UI 레이어에서 Gun 인스턴스를 직접 찾아 반환하도록 변경
         try:
             for o in game_world.world[game_world.LAYER_UI]:
-                if hasattr(o, 'x') and hasattr(o, 'y'):
+                if isinstance(o, Gun):
                     return o
         except Exception:
             pass
@@ -116,7 +120,7 @@ class Kamikaze:
         if hasattr(player, 'take_damage'):
             try:
                 player.take_damage(self.explosion_damage)
-            except Exception:
+            except Exception as e:
                 pass
         elif hasattr(player, 'hp'):
             try:
