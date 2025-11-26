@@ -11,6 +11,7 @@ def _point_in_bb(px, py, bb):
 class Gun:
     bullet_image = None
     image = None
+    heart_image = None
 
     def __init__(self,world=None):
         self.recoil_scale =0.9  # 반동 시 축소 비율
@@ -44,6 +45,13 @@ class Gun:
                 Gun.bullet_image = load_image('bullet.png')
             except Exception:
                 Gun.bullet_image = None
+
+        # Load heart image for HP display
+        if Gun.heart_image is None:
+            try:
+                Gun.heart_image = load_image('heart.png')
+            except Exception:
+                Gun.heart_image = None
 
     def update(self):
         # 반동 타이머
@@ -131,21 +139,34 @@ class Gun:
             # draw a larger outline around boxes to indicate reloading
             draw_rectangle(base_x - 12, base_y - 16, base_x + (box_w + gap) * self.max_ammo - gap + 12, base_y + 16)
 
-        # 플레이어 HP 표시 (오른쪽에 작은 박스들)
+        # 플레이어 HP 표시 (오른쪽에 작은 박스들) - 이미지로 대체
         hp_box_w = 12
         hp_box_h = 12
         hp_base_x = base_x + (box_w + gap) * self.max_ammo + 20
         hp_base_y = base_y
-        for i in range(self.max_hp):
-            hx = hp_base_x + i * (hp_box_w + 4)
-            hy = hp_base_y
-            # 체력이 남아있으면 테두리로 표시 (이미지 없음)
-            draw_rectangle(hx - hp_box_w//2, hy - hp_box_h//2, hx + hp_box_w//2, hy + hp_box_h//2)
-            # 체력이 남은 슬롯은 내부를 채운 것처럼 보이게 작은 추가 사각형을 그림
-            if i < self.hp:
-                inner = 3
-                draw_rectangle(hx - hp_box_w//2 + inner, hy - hp_box_h//2 + inner,
-                               hx + hp_box_w//2 - inner, hy + hp_box_h//2 - inner)
+
+        if Gun.heart_image:
+            # 하트 크기를 작게 고정하여 너무 크게 보이는 문제 해결
+            heart_w = 20
+            heart_h = 20
+            spacing = 6
+            for i in range(self.max_hp):
+                hx = hp_base_x + i * (heart_w + spacing)
+                hy = hp_base_y
+                if i < self.hp:
+                    # 채워진 하트 (고정 크기)
+                    Gun.heart_image.draw(hx, hy, heart_w, heart_h)
+                # 빈 하트는 더 이상 그리지 않음
+        else:
+            # 이미지 없으면 기존 사각형 폴백
+            for i in range(self.max_hp):
+                hx = hp_base_x + i * (hp_box_w + 4)
+                hy = hp_base_y
+                draw_rectangle(hx - hp_box_w//2, hy - hp_box_h//2, hx + hp_box_w//2, hy + hp_box_h//2)
+                if i < self.hp:
+                    inner = 3
+                    draw_rectangle(hx - hp_box_w//2 + inner, hy - hp_box_h//2 + inner,
+                                   hx + hp_box_w//2 - inner, hy + hp_box_h//2 - inner)
 
     # 발사 함수
     def fire(self):
