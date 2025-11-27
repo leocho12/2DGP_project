@@ -8,7 +8,7 @@ class ScoreBoard:
     def __init__(self, font_size=24, margin=12):
         if ScoreBoard.font is None:
             try:
-                ScoreBoard.font = load_font(None, font_size)
+                ScoreBoard.font = load_font('ENCR10B.TTF', font_size)
             except Exception:
                 ScoreBoard.font = None
         self.font_size = font_size
