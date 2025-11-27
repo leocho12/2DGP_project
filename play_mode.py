@@ -14,6 +14,7 @@ ducks = []
 kamikazes=[]
 gun = None
 grass = None
+scoreBoard = None
 
 WAVE_SIZE=2 # 웨이브당 오리 수
 KAMIKAZE_PER_WAVE=1 # 웨이브당 자폭 오리 수
@@ -43,7 +44,7 @@ def spawn_wave():
         game_world.add_object(kamikaze, game_world.LAYER_FOREGROUND)
 
 def init():
-    global ducks, gun, grass, kamikazes
+    global ducks, gun, grass, kamikazes, scoreBoard
 
     # Background (레이어 0)
     background = Background()
@@ -56,6 +57,10 @@ def init():
     # Gun (레이어 3 / UI) — 플레이어는 먼저 생성되어야 함
     gun = Gun()
     game_world.add_object(gun, game_world.LAYER_UI)
+
+    # ScoreBoard (우측 상단) - UI 레이어
+    scoreboard = ScoreBoard()
+    game_world.add_object(scoreboard, game_world.LAYER_UI)
 
     # 오브젝트(오리/자폭) 스폰은 플레이어가 준비된 이후에 수행
     spawn_wave()
@@ -87,6 +92,7 @@ def finish():
     kamikazes.clear()
     gun = None
     grass = None
+    scoreBoard = None
 
 
 def pause(): pass
