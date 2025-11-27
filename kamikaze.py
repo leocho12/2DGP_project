@@ -133,6 +133,10 @@ class Kamikaze:
         if self.state == 'Explode':
             return
         try:
+            game_world.score += 30
+        except Exception:
+            pass
+        try:
             game_world.remove_object(self)
         except Exception:
             pass

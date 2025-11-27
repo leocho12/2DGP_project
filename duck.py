@@ -86,6 +86,10 @@ class Duck:
         # 데미지 적용
         self.hp -= damage
         if self.hp <= 0:
+            try:
+                game_world.score+=50
+            except Exception:
+                pass
             # 사망 처리: Die 상태로 전환하고 낙하/회전 초기화
             self.state = 'Die'
             self.die_fall_speed = 0.0

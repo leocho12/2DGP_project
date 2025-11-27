@@ -7,6 +7,8 @@ LAYER_GRASS = 1         # 풀 레이어 (배경 다음)
 LAYER_FOREGROUND = 2    # 오리 레이어 (풀이 뒤)
 LAYER_UI = 3            # UI 레이어
 
+score=0
+
 def add_object(o, depth=0):
     world[depth].append(o)
 
