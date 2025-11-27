@@ -1,3 +1,4 @@
+# python
 import random
 from pico2d import *
 
@@ -8,13 +9,14 @@ from duck import Duck
 from map import Background, Grass
 from gun import Gun
 from kamikaze import Kamikaze
+from scoreBoard import ScoreBoard
 
 
 ducks = []
 kamikazes=[]
 gun = None
 grass = None
-scoreBoard = None
+scoreboard = None
 
 WAVE_SIZE=2 # 웨이브당 오리 수
 KAMIKAZE_PER_WAVE=1 # 웨이브당 자폭 오리 수
@@ -44,7 +46,7 @@ def spawn_wave():
         game_world.add_object(kamikaze, game_world.LAYER_FOREGROUND)
 
 def init():
-    global ducks, gun, grass, kamikazes, scoreBoard
+    global ducks, gun, grass, kamikazes, scoreboard
 
     # Background (레이어 0)
     background = Background()
@@ -86,13 +88,13 @@ def draw():
 
 
 def finish():
-    global gun, grass
+    global gun, grass, scoreboard
     game_world.clear()
     ducks.clear()
     kamikazes.clear()
     gun = None
     grass = None
-    scoreBoard = None
+    scoreboard = None
 
 
 def pause(): pass
