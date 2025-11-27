@@ -31,8 +31,9 @@ class Gun:
         self.damage=1
 
         # 플레이어 체력
-        self.max_hp = 5
+        self.max_hp = 3
         self.hp = self.max_hp
+        self.dead = False
 
         if Gun.image is None:
             try:
@@ -219,5 +220,5 @@ class Gun:
         except Exception:
             return
         if self.hp <= 0:
-            self.hp = 0
-            # 체력 0 처리: 필요하면 여기서 게임 오버 상태 전환을 구현
+            self.dead = True
+            game_framework.quit()
