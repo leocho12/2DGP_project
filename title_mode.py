@@ -1,15 +1,25 @@
+# python
 from pico2d import *
 import game_framework
 import play_mode
 
-image=None
+image = None
+title_font = None
+title_font_size = 72
+title_margin_top = 60
 
 def init():
-    global image
+    global image, title_font
     try:
-        image=load_image('title.png')
+        image = load_image('title.png')
     except Exception:
-        image=None
+        image = None
+
+    if title_font is None:
+        try:
+            title_font = load_font('ENCR10B.TTF', title_font_size)
+        except Exception:
+            title_font = None
 
 def handle_events():
     events = get_events()
@@ -27,18 +37,37 @@ def handle_events():
 def update():
     pass
 
-def update():
-    pass
-
 def draw():
     clear_canvas()
+    cw = get_canvas_width()
+    ch = get_canvas_height()
+
     if image:
-        image.draw(get_canvas_width() // 2, get_canvas_height() // 2)
+        image.draw(cw // 2, ch // 2)
+
+    # 타이틀 텍스트 그리기 (중앙 상단)
+    text = "Duck Hunt"
+    approx_char_w = title_font_size * 0.6
+    text_w = len(text) * approx_char_w
+    x = cw // 2 - text_w / 2
+    y = ch - title_margin_top - title_font_size // 2
+
+    if title_font:
+        try:
+            title_font.draw(x, y, text)
+        except Exception:
+            pass
+    else:
+        # 폰트 없을 때는 간단한 사각형으로 대체 표시
+        from pico2d import draw_rectangle
+        draw_rectangle(x - 8, y - 8, x + text_w + 8, y + title_font_size + 8)
+
     update_canvas()
 
 def finish():
-    global image
+    global image, title_font
     image = None
+    title_font = None
 
 def pause():
     pass
