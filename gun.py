@@ -22,7 +22,7 @@ class Gun:
         self.recoil_duration=0.12
         self.world=world
         #재장전 변수
-        self.max_ammo=3
+        self.max_ammo=5
         self.ammo=self.max_ammo
         self.reloading=False
         self.reloading_duration=1.5

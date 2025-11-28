@@ -53,6 +53,8 @@ class Duck:
         self.dir=random.choice([-1,1])
         self.angle = random.randint(30, 60)  # 비행 각도
         self.speed = Fly_SPEED_PPS
+        # base speed를 저장하고, 실제 이동 속도는 game_world.speed_multiplier를 곱해 사용합니다
+        self.base_speed = Fly_SPEED_PPS
         # 상승 속도 비율 (0.0 ~ 1.0, 작을수록 상승이 느려짐)
         self.upward_scale = 1.0
         # 체력
@@ -115,10 +117,15 @@ class Duck:
 
             # 대각선 이동 계산
             angle_rad = math.radians(self.angle)
+            # 현재 프레임에서 적용할 실제 속도 (game_world의 multiplier 반영)
+            try:
+                current_speed = self.base_speed * game_world.speed_multiplier
+            except Exception:
+                current_speed = self.base_speed
             # 가로 이동
-            self.x += self.speed * self.dir * math.cos(angle_rad) * game_framework.frame_time
+            self.x += current_speed * self.dir * math.cos(angle_rad) * game_framework.frame_time
             # 세로 이동: 상승일 때만 scale 적용
-            vertical = self.speed * math.sin(angle_rad) * game_framework.frame_time
+            vertical = current_speed * math.sin(angle_rad) * game_framework.frame_time
             if vertical > 0:
                 vertical *= self.upward_scale
             self.y += vertical

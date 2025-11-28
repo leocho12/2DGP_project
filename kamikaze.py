@@ -152,9 +152,9 @@ class Kamikaze:
 
             # 속도 계산: 중앙 근처에서는 약간 가속
             if abs(self.x - 400) <= self.boost_range:
-                current_speed = self.base_speed * self.speed_boost_near
+                current_speed = self.base_speed * self.speed_boost_near * game_world.speed_multiplier
             else:
-                current_speed = self.base_speed
+                current_speed = self.base_speed * game_world.speed_multiplier
 
             # 초기 방향을 유지하며 직진 (현재 속도 사용)
             self.x += self.vx * current_speed * dt
