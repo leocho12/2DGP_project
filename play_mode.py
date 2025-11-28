@@ -35,6 +35,28 @@ def handle_events():
                 gun.handle_event(event)
 
 def spawn_wave():
+    # 점수 기준(300점 단위)을 넘었는지 확인하고, 넘었다면 다음 웨이브가 스폰되기 전에 속도 배수와 플레이어 HP 회복을 적용
+    increases = 0
+    try:
+        while game_world.score >= game_world.next_speed_threshold:
+            game_world.speed_multiplier *= game_world.speed_increment_factor
+            game_world.next_speed_threshold += 300
+            increases += 1
+    except Exception:
+        increases = 0
+
+    if increases > 0:
+        print(f'[play_mode] Applied speed increase x{increases}, multiplier={game_world.speed_multiplier:.3f}, next_threshold={game_world.next_speed_threshold}')
+        # 플레이어(Gun)의 HP를 증가시킴 (gun은 전역 변수)
+        try:
+            if gun is not None:
+                old_hp = gun.hp
+                gun.hp = min(gun.max_hp, gun.hp + increases)
+                print(f'[play_mode] Gun HP restored {old_hp} -> {gun.hp}')
+        except Exception:
+            pass
+
+    # 실제 웨이브 스폰 (속도 적용은 위에서 이미 반영되므로, 새로 생성된 오브젝트는 다음 프레임부터 증가된 배수를 사용함)
     for _ in range(WAVE_SIZE):
         duck = Duck()
         ducks.append(duck)
