@@ -6,7 +6,7 @@ import play_mode
 image = None
 title_font = None
 title_font_size = 72
-title_margin_top = 60
+title_margin_top = 140
 
 def init():
     global image, title_font
