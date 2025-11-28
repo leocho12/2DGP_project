@@ -1,5 +1,3 @@
-# python
-# 파일: `kamikaze.py`
 from pico2d import *
 from damage_overlay import DamageOverlay
 from gun import Gun
@@ -54,7 +52,11 @@ class Kamikaze:
         self.y = y
         self.frame = 0.0
         self.state = 'Charge'
-        self.speed = 180.0
+        # 기본 속도를 더 빠르게 설정 (기존 180 -> 320)
+        self.base_speed = 320.0
+        # 중앙 근처에서 소폭 가속을 적용하기 위한 파라미터
+        self.speed_boost_near = 1.25
+        self.boost_range = 150.0
         self.activation_range = 300.0
         self.blast_radius = 80.0
         self.explosion_damage = 1
@@ -148,9 +150,15 @@ class Kamikaze:
         if self.state == 'Charge':
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * dt) % FRAMES_PER_ACTION
 
-            # 초기 방향을 유지하며 직진
-            self.x += self.vx * self.speed * dt
-            self.y += self.vy * self.speed * dt
+            # 속도 계산: 중앙 근처에서는 약간 가속
+            if abs(self.x - 400) <= self.boost_range:
+                current_speed = self.base_speed * self.speed_boost_near
+            else:
+                current_speed = self.base_speed
+
+            # 초기 방향을 유지하며 직진 (현재 속도 사용)
+            self.x += self.vx * current_speed * dt
+            self.y += self.vy * current_speed * dt
 
             # x=400까지의 거리로 스케일 조절
             start_x = 100 if self.x < 400 else 700  # 시작 위치 (왼쪽 또는 오른쪽)
