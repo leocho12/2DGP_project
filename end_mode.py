@@ -37,7 +37,28 @@ def update():
 
 def draw():
     clear_canvas()
-    # 고정된 end_time(있다면)으로 경과 시간 계산
+
+    w = get_canvas_width()
+    h = get_canvas_height()
+
+    # 검은 배경으로 전체 캔버스 채우기 (set_color는 0.0~1.0 값을 사용)
+    try:
+        set_color(0.0, 0.0, 0.0, 1.0)  # RGBA (0..1)
+        # draw_rectangle는 경우에 따라 윤곽만 그릴 수 있으므로, 안전하게 사각형을 채우려면
+        # draw_rectangle(0,0,w,h)로 충분한 경우가 많음. 예외를 대비해 try/except 처리.
+        draw_rectangle(0, 0, w, h)
+    except Exception:
+        # 실패해도 무시(격자가 보이는 문제를 막기 위해 clear_canvas() 이후
+        # 반드시 뭔가 그려야 한다면 이미지로 대체하거나 별도 처리 필요)
+        pass
+    finally:
+        # 텍스트는 흰색으로 그리기 위해 색 복구
+        try:
+            set_color(1.0, 1.0, 1.0, 1.0)
+        except Exception:
+            pass
+
+    # 이후 기존의 텍스트 출력 코드를 그대로 사용
     score = getattr(game_world, 'score', 0)
     ducks = getattr(game_world, 'ducks_killed', 0)
     bullets = getattr(game_world, 'bullets_fired', 0)
@@ -55,9 +76,6 @@ def draw():
     secs = elapsed % 60
     timestr = f"{mins:02d}:{secs:02d}"
 
-    w = get_canvas_width()
-    h = get_canvas_height()
-
     lines = [
         f"Score: {score}",
         f"Play Time: {timestr}",
@@ -71,14 +89,14 @@ def draw():
     for line in lines:
         if font:
             try:
+                # font.draw의 색 인자는 (r,g,b) 0..255를 허용하므로 흰색 사용
                 font.draw(w//2 - len(line)*14//2, y, line, (255,255,255))
             except Exception:
                 pass
         else:
-            # 폰트가 없으면 간단한 대체 표시
-            from pico2d import draw_rectangle, draw_text
             try:
-                # draw_text는 없을 수 있으므로 안전하게 사각형만 그림
+                # 폰트가 없을 때는 흰색 사각형(대체)
+                set_color(1.0, 1.0, 1.0, 1.0)
                 draw_rectangle(w//2 - 200, y - 16, w//2 + 200, y + 16)
             except Exception:
                 pass
