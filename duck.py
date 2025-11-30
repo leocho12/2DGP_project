@@ -81,23 +81,13 @@ class Duck:
         # 죽으면 히트박스 비활성화
         if self.state != 'Fly':
             return (0, 0, 0, 0)
-
-        # 현재 상태 이미지 리스트에서 첫 번째 이미지 크기를 사용해서 히트박스 계산
-        img_list = Duck.images.get(self.state, Duck.images.get('Fly', []))
-        if img_list:
-            img = img_list[0]
-            w = getattr(img, 'w', 80)
-            h = getattr(img, 'h', 80)
-        else:
-            w, h = 80, 80
-
-        half_width = w / 2
-        half_height = h / 2
+        half_width = 40  # 이미지 너비의 절반 (80/2)
+        half_height = 40  # 이미지 높이의 절반 (80/2)
         return (
             self.x - half_width,  # 왼쪽
             self.y - half_height,  # 아래
             self.x + half_width,  # 오른쪽
-            self.y + half_height
+            self.y  # 위
         )
 
     def take_damage(self, damage):
