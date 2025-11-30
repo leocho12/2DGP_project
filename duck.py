@@ -3,6 +3,7 @@ import math
 from pico2d import *
 import game_world
 import game_framework
+import os
 
 
 # bird Fly Speed
@@ -28,18 +29,26 @@ class Duck:
             Duck.images = {}
             for name in animation_names:
                 frames = []
+                # try numbered frames first
                 for i in range(1, 4):
                     path = f"./duck/{name} ({i}).png"
-                    try:
-                        frames.append(load_image(path))
-                    except Exception:
-                        pass
+                    if os.path.exists(path):
+                        try:
+                            frames.append(load_image(path))
+                        except Exception:
+                            pass
+                # fallback to single-file name if no numbered frames
                 if not frames:
-                    try:
-                        img = load_image(f"./duck/{name}.png")
-                        frames = [img]
-                    except Exception:
-                        frames = []
+                    # try common filename variations
+                    candidates = [f"./duck/{name}.png", f"./duck/{name.lower()}.png"]
+                    for c in candidates:
+                        if os.path.exists(c):
+                            try:
+                                img = load_image(c)
+                                frames = [img]
+                                break
+                            except Exception:
+                                pass
                 if frames:
                     Duck.images[name] = frames
 
@@ -72,13 +81,23 @@ class Duck:
         # 죽으면 히트박스 비활성화
         if self.state != 'Fly':
             return (0, 0, 0, 0)
-        half_width = 40  # 이미지 너비의 절반 (80/2)
-        half_height = 40  # 이미지 높이의 절반 (80/2)
+
+        # 현재 상태 이미지 리스트에서 첫 번째 이미지 크기를 사용해서 히트박스 계산
+        img_list = Duck.images.get(self.state, Duck.images.get('Fly', []))
+        if img_list:
+            img = img_list[0]
+            w = getattr(img, 'w', 80)
+            h = getattr(img, 'h', 80)
+        else:
+            w, h = 80, 80
+
+        half_width = w / 2
+        half_height = h / 2
         return (
             self.x - half_width,  # 왼쪽
             self.y - half_height,  # 아래
             self.x + half_width,  # 오른쪽
-            self.y # 위
+            self.y + half_height
         )
 
     def take_damage(self, damage):
@@ -90,6 +109,11 @@ class Duck:
         if self.hp <= 0:
             try:
                 game_world.score+=50
+            except Exception:
+                pass
+            # 통계: 처치한 오리 수 증가
+            try:
+                game_world.ducks_killed += 1
             except Exception:
                 pass
             # 사망 처리: Die 상태로 전환하고 낙하/회전 초기화

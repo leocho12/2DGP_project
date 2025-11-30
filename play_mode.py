@@ -1,6 +1,7 @@
 # python
 import random
 from pico2d import *
+import time
 
 import game_framework
 import game_world
@@ -85,6 +86,12 @@ def init():
     # ScoreBoard (우측 상단) - UI 레이어
     scoreboard = ScoreBoard()
     game_world.add_object(scoreboard, game_world.LAYER_UI)
+
+    # 플레이 시작 시간 기록
+    try:
+        game_world.start_time = time.time()
+    except Exception:
+        game_world.start_time = None
 
     # 오브젝트(오리/자폭) 스폰은 플레이어가 준비된 이후에 수행
     spawn_wave()

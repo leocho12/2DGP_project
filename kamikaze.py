@@ -138,6 +138,11 @@ class Kamikaze:
             game_world.score += 30
         except Exception:
             pass
+        # 통계: 처치한 오리 수 증가
+        try:
+            game_world.ducks_killed += 1
+        except Exception:
+            pass
         try:
             game_world.remove_object(self)
         except Exception:

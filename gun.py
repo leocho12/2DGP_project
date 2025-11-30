@@ -4,6 +4,12 @@ from sdl2 import *
 import game_world
 import game_framework
 
+# try to import end_mode for graceful end transition
+try:
+    import end_mode
+except Exception:
+    end_mode = None
+
 def _point_in_bb(px, py, bb):
     l, b, r, t = bb
     return l <= px <= r and b <= py <= t
@@ -182,6 +188,12 @@ class Gun:
         self.recoil_timer = self.recoil_duration
         self.ammo -= 1
 
+        # 통계: 발사한 총알 수 증가
+        try:
+            game_world.bullets_fired += 1
+        except Exception:
+            pass
+
         # 충돌 검사 - LAYER_FOREGROUND와 LAYER_UI 모두 검사
         layers_to_check = [game_world.LAYER_FOREGROUND, game_world.LAYER_UI]
 
@@ -221,4 +233,11 @@ class Gun:
             return
         if self.hp <= 0:
             self.dead = True
-            game_framework.quit()
+            # 종료화면으로 전환 (end_mode가 있을 때)
+            try:
+                if end_mode is not None:
+                    game_framework.change_mode(end_mode)
+                else:
+                    game_framework.quit()
+            except Exception:
+                game_framework.quit()
