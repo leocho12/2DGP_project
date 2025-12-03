@@ -23,6 +23,7 @@ animation_names = ['Fly','Hit','Die']
 class Duck:
 
     images=None
+    hit_sound=None
 
     def load_images(self):
         if Duck.images is None:
@@ -77,6 +78,13 @@ class Duck:
         self.die_rotate = 0.0
         self.die_rotate_speed = 0.0
 
+        if Duck.hit_sound is None:
+            try:
+                Duck.hit_sound=load_wav('duckhit.mp3')
+                Duck.hit_sound.set_volume(45)
+            except Exception:
+                Duck.hit_sound=None
+
     def get_bb(self):
         # 죽으면 히트박스 비활성화
         if self.state != 'Fly':
@@ -117,6 +125,14 @@ class Duck:
             self.state = 'Hit'
             self.hit_timer = self.hit_duration
             self.frame = 0.0
+            try:
+                if Duck.hit_sound:
+                    try:
+                        Duck.hit_sound.play()
+                    except Exception:
+                        pass
+            except Exception:
+                pass
 
     def handle_event(self, event):
         pass
