@@ -7,9 +7,10 @@ image = None
 title_font = None
 title_font_size = 72
 title_margin_top = 140
+click_sound = None
 
 def init():
-    global image, title_font
+    global image, title_font, click_sound
     try:
         image = load_image('title.png')
     except Exception:
@@ -21,6 +22,13 @@ def init():
         except Exception:
             title_font = None
 
+    if click_sound is None:
+        try:
+            click_sound = load_wav('duckclick.mp3')
+            click_sound.set_volume(32)
+        except Exception:
+            click_sound = None
+
 def handle_events():
     events = get_events()
     for event in events:
@@ -30,6 +38,14 @@ def handle_events():
             # 스페이스바 누르면 play_mode로 전환
             if getattr(event, 'key', None) == SDLK_SPACE:
                 game_framework.change_mode(play_mode)
+                try:
+                    if click_sound:
+                        try:
+                            click_sound.play()
+                        except Exception:
+                            pass
+                except Exception:
+                    pass
             # ESC 종료
             elif getattr(event, 'key', None) == SDLK_ESCAPE:
                 game_framework.quit()
