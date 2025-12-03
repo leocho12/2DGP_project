@@ -16,6 +16,7 @@ class Kamikaze:
     images = None
     explode_images = None
     damage=None
+    explode_sound = None
 
     def load_images(self):
         if Kamikaze.images is None:
@@ -79,6 +80,13 @@ class Kamikaze:
         self.vx = math.cos(angle_rad)
         self.vy = math.sin(angle_rad)
 
+        if Kamikaze.explode_sound is None:
+            try:
+                Kamikaze.explode_sound = load_wav('explosion-6055.mp3')
+                Kamikaze.explode_sound.set_volume(32)
+            except Exception:
+                Kamikaze.explode_sound = None
+
     def get_image_size(self):
         if Kamikaze.images and len(Kamikaze.images) > 0:
             img = Kamikaze.images[0]
@@ -113,6 +121,14 @@ class Kamikaze:
         # 중앙 도달 시에만 호출되며, 여기서 데미지 오버레이를 생성함
         overlay = DamageOverlay()
         game_world.add_object(overlay, game_world.LAYER_UI)
+        try:
+            if Kamikaze.explode_sound:
+                try:
+                    Kamikaze.explode_sound.play()
+                except Exception:
+                    pass
+        except Exception:
+            pass
 
         player = self.find_player()
         if player is None:
