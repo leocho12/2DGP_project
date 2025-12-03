@@ -71,7 +71,7 @@ class Gun:
 
         if Gun.reload_sound is None:
             try:
-                Gun.reload_sound = load_wav('shotgun-reload-sfx-36524.mp3')
+                Gun.reload_sound = load_wav('rifle-or-shotgun-reload-6787.mp3')
                 Gun.reload_sound.set_volume(32)
             except Exception:
                 Gun.reload_sound = None
