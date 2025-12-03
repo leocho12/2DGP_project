@@ -18,6 +18,8 @@ class Gun:
     bullet_image = None
     image = None
     heart_image = None
+    shot_sound=None
+    reload_sound=None
 
     def __init__(self,world=None):
         self.recoil_scale =0.9  # 반동 시 축소 비율
@@ -59,6 +61,20 @@ class Gun:
                 Gun.heart_image = load_image('heart.png')
             except Exception:
                 Gun.heart_image = None
+
+        if Gun.shot_sound is None:
+            try:
+                Gun.shot_sound = load_wav('shotgun-firing-4-6746.mp3')
+                Gun.shot_sound.set_volume(32)
+            except Exception:
+                Gun.shot_sound = None
+
+        if Gun.reload_sound is None:
+            try:
+                Gun.reload_sound = load_wav('shotgun-reload-sfx-36524.mp3')
+                Gun.reload_sound.set_volume(32)
+            except Exception:
+                Gun.reload_sound = None
 
     def update(self):
         # 반동 타이머
@@ -188,6 +204,15 @@ class Gun:
         self.recoil_timer = self.recoil_duration
         self.ammo -= 1
 
+        try:
+            if Gun.shot_sound:
+                try:
+                    Gun.shot_sound.play()
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
         # 통계: 발사한 총알 수 증가
         try:
             game_world.bullets_fired += 1
@@ -223,6 +248,14 @@ class Gun:
         if not self.reloading and self.ammo < self.max_ammo:
             self.reloading = True
             self.reload_timer = self.reloading_duration
+            try:
+                if Gun.reload_sound:
+                    try:
+                        Gun.reload_sound.play()
+                    except Exception:
+                        pass
+            except Exception:
+                pass
 
     # 플레이어(총)에게 데미지를 입히는 함수 (자폭 오리에서 호출됨)
     def take_damage(self, damage):
