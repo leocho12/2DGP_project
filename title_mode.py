@@ -25,7 +25,7 @@ def init():
     if click_sound is None:
         try:
             click_sound = load_wav('duckclick.mp3')
-            click_sound.set_volume(32)
+            click_sound.set_volume(1000)
         except Exception:
             click_sound = None
 
