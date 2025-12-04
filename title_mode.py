@@ -2,6 +2,7 @@
 from pico2d import *
 import game_framework
 import play_mode
+import threading
 
 image = None
 title_font = None
@@ -9,8 +10,23 @@ title_font_size = 72
 title_margin_top = 140
 click_sound = None
 
+# 백그라운드 사운드 관련 (비동기 로드)
+back_sound = None
+_back_sound_loaded = False
+_back_sound_played = False
+
+def _load_back_sound():
+    global back_sound, _back_sound_loaded
+    try:
+        s = load_wav('fuba.mp3')
+        s.set_volume(30)
+        back_sound = s
+    except Exception:
+        back_sound = None
+    _back_sound_loaded = True
+
 def init():
-    global image, title_font, click_sound
+    global image, title_font, click_sound, _back_sound_loaded, _back_sound_played
     try:
         image = load_image('title.png')
     except Exception:
@@ -28,6 +44,12 @@ def init():
             click_sound.set_volume(1000)
         except Exception:
             click_sound = None
+
+    # 백그라운드 사운드는 별 스레드에서 비동기로 로드하여 init()이 빠르게 반환되게 함
+    _back_sound_loaded = False
+    _back_sound_played = False
+    t = threading.Thread(target=_load_back_sound, daemon=True)
+    t.start()
 
 def handle_events():
     events = get_events()
@@ -51,7 +73,27 @@ def handle_events():
                 game_framework.quit()
 
 def update():
-    pass
+    global _back_sound_loaded, _back_sound_played, back_sound
+    # 로드 완료되었고 아직 재생하지 않았다면 재생(무한 반복 시도)
+    if _back_sound_loaded and not _back_sound_played:
+        try:
+            if back_sound:
+                try:
+                    # 우선 repeat_play() 시도 (pico2d 구현마다 메서드명이 다를 수 있으므로 안전하게 시도)
+                    back_sound.repeat_play()
+                except Exception:
+                    try:
+                        # play(-1)로 무한 반복 시도
+                        back_sound.play(-1)
+                    except Exception:
+                        # 마지막으로 일반 play() 호출 (반복 불가 시 한 번만 재생)
+                        try:
+                            back_sound.play()
+                        except Exception:
+                            pass
+        except Exception:
+            pass
+        _back_sound_played = True
 
 def draw():
     clear_canvas()

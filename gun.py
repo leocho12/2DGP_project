@@ -158,9 +158,6 @@ class Gun:
             else:
                 # 빈 슬롯은 테두리만 보여줌 (기존 동작 유지)
                 pass
-        if self.reloading:
-            # draw a larger outline around boxes to indicate reloading
-            draw_rectangle(base_x - 12, base_y - 16, base_x + (box_w + gap) * self.max_ammo - gap + 12, base_y + 16)
 
         # 플레이어 HP 표시 (오른쪽에 작은 박스들) - 이미지로 대체
         hp_box_w = 12

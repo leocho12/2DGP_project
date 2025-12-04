@@ -7,8 +7,9 @@ import title_mode
 
 font = None
 
+
 def init():
-    global font
+    global font,back_sound
     if font is None:
         try:
             font = load_font('ENCR10B.TTF', 28)
