@@ -1,4 +1,3 @@
-# python
 import random
 from pico2d import *
 import time
@@ -73,7 +72,8 @@ def spawn_wave():
     for _ in range(KAMIKAZE_PER_WAVE):
         kamikaze = Kamikaze()
         kamikazes.append(kamikaze)
-        game_world.add_object(kamikaze, game_world.LAYER_FOREGROUND)
+        # 변경: 자폭 오리는 풀보다 앞에(더 위에) 그려지도록 UI 레이어에 추가
+        game_world.add_object(kamikaze, game_world.LAYER_UI)
 
 def init():
     global ducks, gun, grass, kamikazes, scoreboard
@@ -111,7 +111,8 @@ def update():
     current_ducks=[o for o in game_world.world[game_world.LAYER_FOREGROUND] if isinstance(o,Duck)]
     ducks=current_ducks
 
-    current_kamikazes = [o for o in game_world.world[game_world.LAYER_FOREGROUND] if isinstance(o, Kamikaze)]
+    # 변경: 자폭오리는 이제 UI 레이어에 있을 수 있으므로 모든 레이어를 스캔하여 Kamikaze 인스턴스 수집
+    current_kamikazes = [o for layer in game_world.world for o in layer if isinstance(o, Kamikaze)]
     kamikazes = current_kamikazes
 
     if len(ducks) == 0 and len(kamikazes) == 0:
