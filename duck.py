@@ -210,6 +210,3 @@ class Duck:
                     img.composite_draw(0, 'h', self.x, self.y, w, h)
                 else:
                     img.draw(self.x, self.y, w, h)
-        # 히트박스는 살아있는 경우에만 표시 (디버그 목적)
-        if self.state != 'Die':
-            draw_rectangle(*self.get_bb())
