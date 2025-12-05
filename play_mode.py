@@ -11,6 +11,7 @@ from map import Background, Grass
 from gun import Gun
 from kamikaze import Kamikaze
 from scoreBoard import ScoreBoard
+import stage_choice_mode
 
 
 ducks = []
@@ -36,7 +37,7 @@ def handle_events():
                 gun.handle_event(event)
 
 def spawn_wave():
-    # 점수 기준(300점 단위)을 넘었는지 확인하고, 넘었다면 다음 웨이브가 스폰되기 전에 속도 배수와 플레이어 HP 회복을 적용
+    # 점수 기준(300점 단위)을 넘었는지 확인하고, 넘었다면 다음 웨이브가 스폰되기 전에 속도 배수 적용 및 플레이어 선택 모드로 전환
     increases = 0
     try:
         while game_world.score >= game_world.next_speed_threshold:
@@ -48,16 +49,23 @@ def spawn_wave():
 
     if increases > 0:
         print(f'[play_mode] Applied speed increase x{increases}, multiplier={game_world.speed_multiplier:.3f}, next_threshold={game_world.next_speed_threshold}')
-        # 플레이어(Gun)의 HP를 증가시킴 (gun은 전역 변수)
+        # 플레이어가 선택하도록 stage_choice_mode로 전환
         try:
-            if gun is not None:
-                old_hp = gun.hp
-                gun.hp = min(gun.max_hp, gun.hp + increases)
-                print(f'[play_mode] Gun HP restored {old_hp} -> {gun.hp}')
+            stage_choice_mode.pending_increases = increases
+            game_framework.push_mode(stage_choice_mode)
         except Exception:
-            pass
+            # 실패 시 폴백으로 자동 회복 적용
+            try:
+                if gun is not None:
+                    old_hp = gun.hp
+                    gun.hp = min(gun.max_hp, gun.hp + increases)
+                    print(f'[play_mode] (fallback) Gun HP restored {old_hp} -> {gun.hp}')
+            except Exception:
+                pass
+        # 선택 모드에서 돌아올 때까지 웨이브 생성 중단
+        return
 
-    # 실제 웨이브 스폰 (속도 적용은 위에서 이미 반영되므로, 새로 생성된 오브젝트는 다음 프레임부터 증가된 배수를 사용함)
+    # 실제 웨이브 스폰
     for _ in range(WAVE_SIZE):
         duck = Duck()
         ducks.append(duck)
@@ -65,7 +73,6 @@ def spawn_wave():
     for _ in range(KAMIKAZE_PER_WAVE):
         kamikaze = Kamikaze()
         kamikazes.append(kamikaze)
-        # Kamikaze는 오리와 같은 전경 레이어에 추가하여 일관성 유지
         game_world.add_object(kamikaze, game_world.LAYER_FOREGROUND)
 
 def init():
