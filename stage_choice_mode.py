@@ -119,7 +119,6 @@ def draw():
         # game_world 구성이 아직 준비되지 않았으면 무시
         pass
 
-    # (배경 채우기 대신 텍스트만 오버레이)
 
     title = "Stage Up! Choose Upgrade"
     opt1 = "1: Increase Gun Damage (+1)"
