@@ -9,6 +9,9 @@ title_font = None
 title_font_size = 72
 title_margin_top = 140
 click_sound = None
+instr_font = None
+instr_font_size = 28
+instr_text = "Press SPACE to Start"
 
 # 백그라운드 사운드 관련 (비동기 로드)
 back_sound = None
@@ -26,7 +29,7 @@ def _load_back_sound():
     _back_sound_loaded = True
 
 def init():
-    global image, title_font, click_sound, _back_sound_loaded, _back_sound_played
+    global image, title_font, click_sound, _back_sound_loaded, _back_sound_played, instr_font
     try:
         image = load_image('title.png')
     except Exception:
@@ -37,6 +40,12 @@ def init():
             title_font = load_font('ENCR10B.TTF', title_font_size)
         except Exception:
             title_font = None
+
+    if instr_font is None:
+        try:
+            instr_font = load_font('ENCR10B.TTF', instr_font_size)
+        except Exception:
+            instr_font = None
 
     if click_sound is None:
         try:
@@ -119,6 +128,19 @@ def draw():
         # 폰트 없을 때는 간단한 사각형으로 대체 표시
         from pico2d import draw_rectangle
         draw_rectangle(x - 8, y - 8, x + text_w + 8, y + title_font_size + 8)
+
+    instr_y = 40
+    if instr_font:
+        try:
+            approx_w = instr_font_size * 0.6
+            instr_x = cw // 2 - (len(instr_text) * approx_w) / 2
+            instr_font.draw(instr_x, instr_y, instr_text, (220, 220, 220))
+        except Exception:
+            pass
+    else:
+        # 폰트 없을 때 대체 표시
+        from pico2d import draw_rectangle
+        draw_rectangle(cw // 2 - 200, instr_y - 14, cw // 2 + 200, instr_y + 14)
 
     update_canvas()
 
