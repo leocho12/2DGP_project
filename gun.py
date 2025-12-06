@@ -266,7 +266,7 @@ class Gun:
             # 종료화면으로 전환 (end_mode가 있을 때)
             try:
                 if end_mode is not None:
-                    game_framework.change_mode(end_mode)
+                    game_framework.push_mode(end_mode)
                 else:
                     game_framework.quit()
             except Exception:
