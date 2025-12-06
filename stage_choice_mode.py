@@ -8,7 +8,7 @@ pending_increases = 0  # play_mode에서 설정해서 전달
 _remaining = 0
 click_sound = None
 _overlay_drawn_logged = False
-overlay_image = None
+
 
 def init():
     global font, _remaining, pending_increases
@@ -18,7 +18,7 @@ def init():
     except Exception:
         font = None
 
-    global click_sound, overlay_image
+    global click_sound
     if click_sound is None:
         try:
             click_sound = load_wav('duckclick.mp3')

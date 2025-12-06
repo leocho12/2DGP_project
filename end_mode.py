@@ -6,9 +6,6 @@ import game_world
 
 
 font = None
-badge_left = None
-badge_right = None
-badge_size = (64, 64)
 
 # 엔딩 시점의 고정된 시간 문자열을 저장할 변수
 _saved_timestr = None
@@ -20,16 +17,6 @@ def init():
             font = load_font('ENCR10B.TTF', 28)
     except Exception:
         font = None
-
-    # 뱃지 이미지 로드 (파일명이 다르면 프로젝트에 맞게 변경)
-    try:
-        badge_left = load_image('badge1.png')
-    except Exception:
-        badge_left = None
-    try:
-        badge_right = load_image('badge2.png')
-    except Exception:
-        badge_right = None
 
     # 엔딩 모드로 진입한 시점의 플레이 시간을 캡처하여 고정한다 (타이머 멈춤 효과)
     try:
