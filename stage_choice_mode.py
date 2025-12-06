@@ -1,8 +1,7 @@
 from pico2d import *
 import game_framework
 import game_world
-import os
-import base64
+
 
 font = None
 pending_increases = 0  # play_mode에서 설정해서 전달
@@ -29,34 +28,6 @@ def init():
                 pass
         except Exception:
             click_sound = None
-
-    # Try loading a dedicated overlay image; if missing, create one from embedded base64
-    if overlay_image is None:
-        # prefer existing file
-        try:
-            if os.path.exists('overlay.png'):
-                overlay_image = load_image('overlay.png')
-            else:
-                # create overlay.png from embedded base64 (1x1 black pixel PNG)
-                b64 = (
-                    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMA'
-                    'ASsJTYQAAAAASUVORK5CYII='
-                )
-                try:
-                    with open('overlay.png', 'wb') as f:
-                        f.write(base64.b64decode(b64))
-                    overlay_image = load_image('overlay.png')
-                except Exception:
-                    # fallback to demage.png if creation/loading fails
-                    try:
-                        overlay_image = load_image('demage.png')
-                    except Exception:
-                        overlay_image = None
-        except Exception:
-            try:
-                overlay_image = load_image('demage.png')
-            except Exception:
-                overlay_image = None
 
     _remaining = pending_increases
     pending_increases = 0
@@ -147,14 +118,6 @@ def draw():
     except Exception:
         # game_world 구성이 아직 준비되지 않았으면 무시
         pass
-
-    # draw overlay image if available (covers screen, should have alpha)
-    try:
-        if overlay_image:
-            overlay_image.draw(w // 2, h // 2, w, h)
-    except Exception as e:
-        # failed to draw overlay image; ignore
-        print('[stage_choice_mode] overlay image draw failed:', repr(e))
 
     # (배경 채우기 대신 텍스트만 오버레이)
 
